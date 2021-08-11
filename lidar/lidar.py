@@ -68,10 +68,18 @@ def lidarlisten():
         rospy.Subscriber('/tf', TFMessage, lidarcallback)       #계속 lidarcallback()함수를 이용하여 데이터를 받아옵니다
     return(lidar_result)                                        #lidar_result 리스트에 값이 담기면 그 리스트를 반환합니다
 
- """
- lidarterminate()함수는
- 
-    
+"""
+lidarterminate()함수는
+라이다 관련 프로그램들을 모두 종료하는 함수입니다.
+처음에 라이다를 켤 때, lidarinit() 함수를 통해 라이다를 켰었습니다.
+lidarinit() 함수 에서, 리눅스 터미널로 명령을 보내서
+라이다 관련 ROS 프로그램을 백그라운드로 실행시켰었습니다.
+screen을 이용해 core(ros 핵심 프로그램), lidar(라이다 작동 프로그램), mapping(현재 위치 매핑 및 파악 프로그램)
+이 3가지 프로그램을 백그라운드로 실행시켰었습니다.
+따라서 이 3가지 프로그램을 닫을 때도, screen 이라는 프로그램을 이용하여 닫을 수 있습니다.
+'screen -S 프로그램이름 -X quit'
+을 사용하면 screen 으로 실행되어있는 프로그램들을 종료할 수 있습니다.
+"""    
 
 def lidarterminate():
     os.system("screen -S mapping -X quit")
