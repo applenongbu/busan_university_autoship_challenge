@@ -82,11 +82,11 @@ screen을 이용해 core(ros 핵심 프로그램), lidar(라이다 작동 프로
 """    
 
 def lidarterminate():
-    os.system("screen -S mapping -X quit")
+    os.system("screen -S mapping -X quit")          #프로그램을 역순으로 끄기 시작합니다. 위치 파악 프로그램부터 종료합니다.
     print("lidar mapping terminated")
-    time.sleep(1)
-    os.system("screen -S lidar -X quit")
+    time.sleep(1)                                   #끄는데는 딱히 기다림이 필요없으므로 조금만 delay를 줍니다
+    os.system("screen -S lidar -X quit")            #라이다 작동 프로그램을 끕니다
     print("lidar device terminated")
-    time.sleep(1)
-    os.system("screen -S core -X quit")
+    time.sleep(1)                                   #또 조금 기다립니다
+    os.system("screen -S core -X quit")             #ROS 핵심 프로그램을 끕니다
     print("lidar core terminated")
