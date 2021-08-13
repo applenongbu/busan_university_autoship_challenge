@@ -1,8 +1,6 @@
-import sys
-import tty
-import termios
-
 from graphic import Graphic
+from motor import Motor
+from socket import *
 
 
 # ################### MODE LIST ####################
@@ -20,67 +18,80 @@ class Control:
         self.mode = mode
 
         # 모터
-        self.motor = 'motor'
+        self.motor = Motor()
 
-        # mode1
-        if mode == 1:
-            print('직접 조종')
-
-        # mode2
-        elif mode == 2:
-            print('mode 2')
+    # 선박 주행
+    def start(self):
+        pass
 
     # 선박 주행
     def drive(self):
-        # mode1
-        if self.mode == 1:
-            # 주행 종료까지 반복
-            while True:
-                # 키 입력 받기
-                key = get_key()
+        pass
 
-                # 키에 따라 주행하기
-                if key == 'w':
-                    print('전진')
-                elif key == 'a':
-                    print('좌회전')
-                elif key == 'd':
-                    print('우회전')
-                elif key == 's':
-                    print('후진')
+    # 선박 주행
+    def collect(self):
+        pass
 
-                # 수집하기
-                elif key == 'c':
-                    print('수집')
-
-                # q 입력시 주행 종료
-                elif key == 'q':
-                    print('주행 종료')
-                    break
-            return False
+    # 종료
+    def __del__(self):
+        pass
 
 
-# 키보드 입력 처리
-def get_key():
-    # 스트림의 파일 설명자를 숫자로 반환
-    fd = sys.stdin.fileno()
+# mode1
+class ControlMode1:
+    # 초기화
+    def __init__(self):
+        # 모터
+        self.motor = Motor()
 
-    # 파일 설명자의 속성 리스트 반환
-    or_attr = termios.tcgetattr(fd)
+        # 모터 기본 셋팅값
+        self.speed = 15
+        self.direction = 0
 
-    # 문자 입력받기
-    try:
-        # 파일 설명자를 raw 모드로 변환
-        # raw 형식은 escape 문자에 영향 받지 않고 그대로 표시
-        tty.setraw(fd)
+        # 소켓 통신 셋팅
+        self.sock = socket(AF_INET, SOCK_STREAM)
+        self.sock.bind(('', 1972))
+        self.sock.listen(1)
 
-        # 1바이트 읽기
-        ch = sys.stdin.read(1)
+    # 선박 주행
+    def drive(self):
+        conn, _ = self.sock.accept()
 
-    # 입력 완료
-    finally:
-        # 입력을 전송 후 파일 설명자의 속성 변환
-        termios.tcsetattr(fd, termios.TCSADRAIN, or_attr)
+        while True:
+            data = conn.recv(1024)
+            print(data)
 
-    # 입력값 반환
-    return ch
+            if data.decode('utf-8') == "exit":
+                break
+            if data.decode('utf-8') == "up":
+                self.direction = 1
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "down":
+                self.direction = -1
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "left":
+                self.motor.servo_move(50)
+            elif data.decode('utf-8') == "right":
+                self.motor.servo_move(130)
+            elif data.decode('utf-8') == "keyupbldc":
+                self.direction = 0
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "keyupservo":
+                self.motor.servo_move(90)
+            if data.decode('utf-8') == "one":
+                self.speed = 15
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "two":
+                self.speed = 25
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "thr":
+                self.speed = 35
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "for":
+                self.speed = 45
+                self.motor.bldc_move(self.direction * self.speed + 90)
+            elif data.decode('utf-8') == "fiv":
+                self.speed = 55
+                self.motor.bldc_move(self.direction * self.speed + 90)
+
+        return False
