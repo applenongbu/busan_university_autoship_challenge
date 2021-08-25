@@ -33,7 +33,7 @@ def main(joy_stick):
                     exit()
 
             degree = str(int((joystick.get_axis(0) * 50) + 90))
-            speed = str(int((joystick.get_axis(2) * 50) + 90))
+            speed = str(90 - int((joystick.get_axis(2) * 50)))
 
             while len(degree) != 3:
                 if len(degree) < 3:
