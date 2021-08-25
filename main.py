@@ -1,41 +1,33 @@
-from control import Control
+from control import *
 
 
-# 전반적인 작업 관리자
-class Manager:
-    # 초기화
-    def __init__(self):
-        self.control = Control(1)
-
-    # 시작 단계(초기값 수집, 주변 정보 인식)
-    def start(self):
-        print('start')
-
-    # 주행 단계(부표 피해서 주행)
-    def drive(self):
-        self.control.drive()
-
-    # 수집 단계(목표물 수집하며 주행)
-    def collect(self):
-        print('collect')
-
-    # 종료
-    def __del__(self):
-        del self.control
+# ################### MODE LIST ####################
+# mode1 : 사용자가 직접 조종
+# mode2 : camera + lidar 사용해서 자율 주행
+# ##################################################
 
 
-# 최종 실행
+# 메인 함수(프로그램 실행)
 if __name__ == "__main__":
-    # 작업 관리자 호출
-    manager = Manager()
+    # 모드 입력
+    # mode = int(input("어떤 모드를 실행할까요?(1: 직접 조종, 2: 카메라+라이다)\n"))
+    mode = 2
 
-    # 시작 단계
-    manager.start()
+    # mode1(직접 주행일 때)
+    if mode == 1:
+        # 클래스 불러오기
+        control = ControlMode1(True)
 
-    # 주행 단계(True 반환시 수집 시작/False 반환시 작업 종료)
-    while manager.drive():
-        # 수집 단계
-        manager.collect()
+        # 주행 시작
+        control.drive_myself()
 
-    # 종료
-    del manager
+    # mode2(camera + lidar)
+    elif mode == 2:
+        # 클래스 불러오기
+        control = ControlMode2()
+
+        # 주행 시작
+        while True:
+            control.set_destination()
+
+    del control

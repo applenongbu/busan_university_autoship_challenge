@@ -23,6 +23,9 @@ class Lidar:
         # 라이다에서 파악한 자신의 위치가 담길 리스트를 만듭니다. 그리고 초기화합니다
         self.position = [0.0, 0.0, 0.0]
 
+        # ROS 시스템과 통신을 시작합니다(노드를 만든다고 합니다)
+        self.lidar = rospy.init_node('listener', anonymous=True)
+
     def callback(self, data):
         # data 변수에, 라이다에서 받아온 수 많은 정보들을 저장합니다
         data = data.transforms[0]
@@ -37,16 +40,8 @@ class Lidar:
             self.position[2] = data.transform.rotation.z
 
     def listen(self):
-        # position 리스트에 담긴 쓸모없는 값을 지워줍니다
-        self.position = [0.0, 0.0, 0.0]
-
-        # ROS 시스템과 통신을 시작합니다(노드를 만든다고 합니다)
-        rospy.init_node('listener', anonymous=True)
-
-        # lidarcallback()함수를 통해 유의미한 값이 리스트에 담겨진게 아니라면
-        while self.position[0] == 0.0:
-            # 계속 lidarcallback()함수를 이용하여 데이터를 받아옵니다
-            rospy.Subscriber('/tf', TFMessage, Lidar.callback)
+        # 계속 callback()함수를 이용하여 데이터를 받아옵니다
+        self.lidar.Subscriber('/tf', TFMessage, Lidar.callback)
 
     # 종료
     def __del__(self):
