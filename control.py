@@ -1,6 +1,7 @@
-from graphic import *
 from motor import *
 from socket import *
+from graphic import *
+from lidar import *
 from camera import *
 from imu import *
 import calculate as cal
@@ -113,7 +114,7 @@ class ControlMode2:
 
         # IMU 생성 및 초기값(처음 각도) 저장
         self.imu = Imu()
-        self.first_degree = self.imu.imu_read()
+        self.forward_direction = self.imu.imu_read()
 
         # 지도 크기 설정 후 지도 생성(세로 : 14.5m * 6, 가로 : 4.5m * 6)
         self.map_w = 270
@@ -121,18 +122,38 @@ class ControlMode2:
         self.map_graphic = Graphic("Map", self.map_w, self.map_h)
         self.map_graphic.set_image(np.full((self.map_h, self.map_w, 3), (150, 200, 250), dtype=np.uint8))
 
-        # 라이다로 벽과의 거리 구하기
-        block_distance = 1
+        # 라이다 생성
+        self.lidar = Lidar()
 
-        # 지도에 선박 초기 위치 그리기
-        self.map_graphic.draw_ship_on_map([self.map_w / 2, self.map_h - (block_distance * 6)])
+        # 벽과의 거리, 각도 저장할 변수
+        wall_distance_back = 100
+        wall_distance_left = 100
+        wall_distance_right = 100
+        wall_degree_back = 0
 
-        # 적정 객체 크기
-        self.min_size = 100
-        self.max_size = 500
+        # 가장 짧은 거리가 후방에 위치할 때까지 라이다 인식
+        while not 170 <= int(wall_degree) <= 190:
+            # 130 ~ 230 각도 범위의 거리 중 가장 짧은 거리 탐색
+            blocks = self.lidar.block_listen()
+            for idx, block in enumerate(blocks[260:460]):
+                if block < wall_distance_back:
+                    wall_distance_back = block
+                    wall_degree = (idx + 260) / 2.0
 
-        # 지나온 부표 갯수
-        self.destination = []
+        # for left_block in blocks:
+        #     if
+        #
+        # if
+        #
+        # # 지도에 선박 초기 위치 그리기
+        # self.map_graphic.draw_ship_on_map([self.map_w / 2, self.map_h - (block_distance * 6)])
+        #
+        # # 적정 객체 크기
+        # self.min_size = 100
+        # self.max_size = 500
+        #
+        # # 지나온 부표 갯수
+        # self.destination = []
 
     # 지도 갱신하기
     def update_map(self):
