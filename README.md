@@ -13,3 +13,8 @@ https://drive.google.com/drive/folders/1ABGKn1PrxjEbD11ZQp64DfL-0SCUDpmw?usp=sha
 
 ## 크리스 통합문서
 https://docs.google.com/document/d/13t37ClYS8YGFCrX-lMFDNfPgKYROPiuC9YF9j-whGPk/edit?usp=sharing
+
+
+# Control Flowchart
+![control_flowchart](https://user-images.githubusercontent.com/68107013/130913568-98f63c2e-c287-4e51-a680-85b4d90e66fe.png)
+
