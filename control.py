@@ -47,7 +47,7 @@ class ControlMode1:
                 if self.joy_stick:
                     if data != '':
                         conn.send("ok".encode('utf-8'))
-                        self.motor.motor_move(int(data[0:3]) - 90, int(data[3:6]) - 90)
+                        self.motor.motor_move(int(data[0:3]), int(data[3:6]))
 
                 # 조이스틱을 사용하지 않을 때
                 else:
